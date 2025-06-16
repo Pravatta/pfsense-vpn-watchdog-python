@@ -1,37 +1,23 @@
-# 🔒 VPN Watchdog para pfSense (Python)
+# 🛡️ VPN Watchdog em Python para pfSense com alerta WhatsApp
 
-Script em Python para monitoramento de conexões VPN OpenVPN em servidores pfSense, com reinício automático via SSH e envio de alertas por WhatsApp utilizando o CallMeBot.
-
----
-
-## 📌 O que faz este script
-
-- Monitora continuamente o status da VPN com `sockstat | grep openvpn`;
-- Reinicia o cliente OpenVPN caso a conexão caia;
-- Envia alertas personalizados por WhatsApp usando emojis ⚠️ e ✅;
-- Gera arquivos de log separados por servidor no mesmo diretório do script;
-- Executa o monitoramento em paralelo para múltiplos servidores pfSense.
+Este é um script de watchdog desenvolvido em **Python** para servidores **pfSense**//**SSH** com OpenVPN. Ele realiza o monitoramento em tempo real da conexão VPN via Python e reinicia automaticamente a VPN em caso de falha, além de enviar alertas pelo **WhatsApp** utilizando a API do [CallMeBot](https://www.callmebot.com/).
 
 ---
 
-## 📦 Bibliotecas utilizadas
+## ✅ Funcionalidades
 
-### `paramiko` (SSH)
-Permite que o script se conecte ao pfSense via SSH e execute comandos como `pfSsh.php playback svc start/stop`.
-
-### `requests` (HTTP)
-Usado para enviar alertas via API HTTP do CallMeBot para o WhatsApp.
-
-### `threading`
-Utilizado para monitorar todos os servidores simultaneamente.
+- Monitoramento em paralelo de múltiplos pfSense via `sockstat | grep openvpn`
+- Reinício automático da VPN com `pfSsh.php playback svc stop/start`
+- Alertas via WhatsApp (CallMeBot API)
+- Logs individuais para cada servidor, salvos no mesmo diretório do script
+- Verificação a cada 5 segundos sem flood
 
 ---
 
-## 🧪 Requisitos
+## 🔧 Requisitos
 
 - Python 3.8 ou superior
-
-Instale as dependências com:
+- Bibliotecas:
 
 ```bash
 pip install paramiko requests
@@ -41,68 +27,66 @@ pip install paramiko requests
 
 ## ⚙️ Configuração
 
-### 1. Edite os dados dos servidores:
+### 1. Servidores
+Edite a lista de servidores no início do script:
 
 ```python
 SERVIDORES = [
     {"nome": "VPN SERVIDOR 1", "host": "exemplo1.ddns.net"},
-    {"nome": "VPN SERVIDOR 2", "host": "exemplo2.ddns.net"}
+    ...
 ]
 ```
 
-### 2. Preencha os dados de acesso SSH:
+### 2. SSH
+Preencha seu usuário e senha SSH:
 
 ```python
 USERNAME = "seu_usuario"
 PASSWORD = "sua_senha"
 ```
 
-### 3. Configure o CallMeBot (WhatsApp)
+### 3. WhatsApp (CallMeBot)
 
-#### 📲 Como ativar o CallMeBot:
+**Passo a passo:**
 
-1. Adicione este número no WhatsApp: **+34 603 21 25 65**
-2. Envie a mensagem:  
-   ```
-   I allow callmebot to send me messages
-   ```
-3. Você receberá uma resposta com sua API Key.
-4. Atualize o script com seu número e chave:
+1. Adicione este número no WhatsApp: `+34 603 21 25 65`
+2. Envie a mensagem: `I allow callmebot to send me messages`
+3. Você receberá sua **API key**
+4. Preencha no script:
 
 ```python
 WHATSAPP_PHONE = "55SEUNUMERO"  # Ex: 5511999999999
-WHATSAPP_APIKEY = "CHAVE_RECEBIDA"
+WHATSAPP_APIKEY = "SUA_APIKEY"
 ```
 
 ---
 
-## 🚀 Como usar
-
-1. Salve o script como `vpn_watchdog.py`.
-2. Execute com:
+## 🚀 Como executar
 
 ```bash
 python vpn_watchdog.py
 ```
 
-> O monitoramento será iniciado em paralelo para todos os servidores configurados.
-
----
-
-## 🗂️ Logs
-
-O script cria logs individuais por servidor, salvos no mesmo diretório onde o `.py` é executado:
+- O script roda todos os servidores em paralelo
+- Logs são gerados no mesmo diretório:
 
 ```
 vpn_monitor_vpn_servidor_1.log
 vpn_monitor_vpn_servidor_2.log
+...
 ```
 
 ---
 
-## 📌 Exemplo de alerta no WhatsApp
+## 📲 Exemplo de alerta no WhatsApp
 
 ```
 ⚠️ Falha na VPN de VPN SERVIDOR 1, reiniciando...
 ✅ VPN de VPN SERVIDOR 1 restaurada com sucesso.
 ```
+
+---
+
+## 🔐 Observação
+
+Evite versionar este script com usuário/senha reais ou chave de API. Use variáveis de ambiente em ambientes produtivos.
